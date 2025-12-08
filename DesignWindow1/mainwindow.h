@@ -2,13 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <ui_mainwindow.h>
-
-QT_BEGIN_NAMESPACE
-namespace Ui {
-class MainWindow;
-}
-QT_END_NAMESPACE
+#include"ui_ui_mainwindow.h"
 
 class MainWindow : public QMainWindow,
                    public Ui_MainWindow
@@ -19,7 +13,12 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void onSaveTriggered();
+    void onSaveAsTriggered();
+
 private:
-    Ui::MainWindow *ui;
+    QString currentFilePath;
+    void saveToFile(const QString &filePath);
 };
 #endif // MAINWINDOW_H

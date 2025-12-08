@@ -13,12 +13,16 @@ SOURCES += \
     mainwindow.cpp
 
 HEADERS += \
-    mainwindow.h
-
-FORMS += \
-    mainwindow.ui
+    mainwindow.h\
+    ui_ui_mainwindow.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+FORMS += \
+    ui_mainwindow.ui
+
+RESOURCES += \
+    images/images/designwindow.qrc
