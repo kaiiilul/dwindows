@@ -16,6 +16,7 @@ public:
 private slots:
     void onSaveTriggered();
     void onSaveAsTriggered();
+    void onOpenTriggered();
 
 private:
     QString currentFilePath;

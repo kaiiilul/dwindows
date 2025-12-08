@@ -89,6 +89,9 @@ MainWindow::MainWindow(QWidget *parent)
     // 連接 Save 和 Save As 動作
     connect(action_S, &QAction::triggered, this, &MainWindow::onSaveTriggered);
     connect(action_A, &QAction::triggered, this, &MainWindow::onSaveAsTriggered);
+    
+    // 連接 Open 動作
+    connect(action_O, &QAction::triggered, this, &MainWindow::onOpenTriggered);
 }
 
 MainWindow::~MainWindow() {}
@@ -106,30 +109,59 @@ void MainWindow::onSaveTriggered()
 
 void MainWindow::onSaveAsTriggered()
 {
+    // 跳出檔案儲存對話框
     QString fileName = QFileDialog::getSaveFileName(
         this,
         tr("另存檔案"),
         "",
         tr("文字檔案 (*.txt);;所有檔案 (*.*)")
     );
-    
+    // 若使用者選擇了檔案
     if (!fileName.isEmpty()) {
-        saveToFile(fileName);
-        currentFilePath = fileName;
+        saveToFile(fileName); // 寫入檔案
+        currentFilePath = fileName; // 更新目前檔案路徑
     }
 }
 
 void MainWindow::saveToFile(const QString &filePath)
 {
     QFile file(filePath);
+    // 打開失敗 → 顯示錯誤訊息
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QMessageBox::warning(this, tr("儲存錯誤"), 
                            tr("無法儲存檔案: %1").arg(file.errorString()));
         return;
     }
-    
+    // 使用 QTextStream 寫入內容
     QTextStream out(&file);
     out << textEdit->toPlainText();
-    
+    // 狀態列顯示提示
     statusbar->showMessage(tr("檔案已儲存: %1").arg(filePath), 3000);
+}
+
+void MainWindow::onOpenTriggered()
+{
+    // 跳出檔案選擇視窗
+    QString fileName = QFileDialog::getOpenFileName(
+        this,
+        tr("開啟檔案"),
+        "",
+        tr("文字檔案 (*.txt);;所有檔案 (*.*)")
+    );
+    
+    if (!fileName.isEmpty()) {
+        QFile file(fileName);
+        // 開啟失敗 → 顯示錯誤
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QMessageBox::warning(this, tr("開啟錯誤"), 
+                               tr("無法開啟檔案: %1").arg(file.errorString()));
+            return;
+        }
+        // 讀取整個檔案內容
+        QTextStream in(&file);
+        textEdit->setPlainText(in.readAll());
+        currentFilePath = fileName;
+        
+        statusbar->showMessage(tr("檔案已開啟: %1").arg(fileName), 3000);
+    }
 }
